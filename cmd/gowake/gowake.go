@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/lupinelab/gowake"
-	"github.com/lupinelab/gowake/cmd/listen"
+	"github.com/jedrw/gowake"
+	"github.com/jedrw/gowake/cmd/listen"
 	"github.com/spf13/cobra"
 )
 

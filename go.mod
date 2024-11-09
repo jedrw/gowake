@@ -1,4 +1,4 @@
-module github.com/lupinelab/gowake
+module github.com/jedrw/gowake
 
 go 1.22
 

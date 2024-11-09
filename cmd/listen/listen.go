@@ -3,7 +3,7 @@ package listen
 import (
 	"fmt"
 
-	"github.com/lupinelab/gowake"
+	"github.com/jedrw/gowake"
 	"github.com/spf13/cobra"
 )
 
