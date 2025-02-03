@@ -1,11 +1,11 @@
-package gowake
+package magicpacket
 
 import (
 	"fmt"
 	"net"
 )
 
-func SendMagicPacket(packet MagicPacket, ip string, port int) error {
+func Send(packet MagicPacket, ip string, port int) error {
 	conn, err := net.Dial("udp", fmt.Sprintf("%s:%d", ip, port))
 	if err != nil {
 		return err

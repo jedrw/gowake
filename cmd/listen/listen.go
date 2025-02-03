@@ -3,7 +3,7 @@ package listen
 import (
 	"fmt"
 
-	"github.com/jedrw/gowake"
+	"github.com/jedrw/gowake/pkg/magicpacket"
 	"github.com/spf13/cobra"
 )
 
@@ -15,13 +15,13 @@ var ListenCmd = &cobra.Command{
 		cont, _ := cmd.Flags().GetBool("continuous")
 		fmt.Printf("Listening for magic packets on port %d:\n", port)
 		for {
-			remote, mac, err := gowake.Listen(port)
+			remote, mac, err := magicpacket.Listen(port)
 			if err != nil {
 				if err.Error() == fmt.Sprintf("listen udp 0.0.0.0:%d: bind: permission denied", port) {
 					fmt.Println("Please run as elevated user")
 					return
 				} else {
-					fmt.Println(err.Error())
+					fmt.Println(err)
 					return
 				}
 			}

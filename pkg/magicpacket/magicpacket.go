@@ -1,4 +1,4 @@
-package gowake
+package magicpacket
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 
 type MagicPacket [102]byte
 
-func NewMagicPacket(mac string) (MagicPacket, error) {
+func New(mac string) (MagicPacket, error) {
 	// Parse mac address
 	hwAddr, err := net.ParseMAC(mac)
 	if err != nil {

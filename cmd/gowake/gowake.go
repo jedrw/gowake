@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/jedrw/gowake"
 	"github.com/jedrw/gowake/cmd/listen"
+	"github.com/jedrw/gowake/pkg/magicpacket"
 	"github.com/spf13/cobra"
 )
 
@@ -33,14 +33,14 @@ var gowakeCmd = &cobra.Command{
 		}
 
 		// Build packet
-		mp, err := gowake.NewMagicPacket(args[0])
+		mp, err := magicpacket.New(args[0])
 		if err != nil {
 			fmt.Println(err.Error())
 			return
 		}
 
 		// Send packet
-		err = gowake.SendMagicPacket(mp, ip, port)
+		err = magicpacket.Send(mp, ip, port)
 		if err != nil {
 			fmt.Println(err.Error())
 		}
