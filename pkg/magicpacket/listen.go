@@ -23,7 +23,7 @@ func Listen(ip string, port int) (*net.UDPAddr, string, error) {
 	defer listener.Close()
 
 	magicPacket := MagicPacket{}
-	_, remote, err := listener.ReadFromUDP(magicPacket[:])
+	_, remote, err := listener.ReadFromUDP(magicPacket.Bytes())
 	if err != nil {
 		return remote, "", err
 	}

@@ -34,7 +34,7 @@ func New(mac string) (MagicPacket, error) {
 	return magicPacket, nil
 }
 
-func (mp MagicPacket) Bytes() []byte {
+func (mp *MagicPacket) Bytes() []byte {
 	return mp[:]
 }
 
