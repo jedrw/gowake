@@ -94,6 +94,8 @@ workflows:
               only: /v\d+\.\d+\.\d+/
       - build:
           filters:
+            branches:
+              ignore: /.*/
             tags:
               only: /v\d+\.\d+\.\d+/
       - release:
