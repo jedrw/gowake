@@ -16,7 +16,7 @@ func TestNewErrorsWithInvalidMacAddress(t *testing.T) {
 }
 
 func TestNewErrorsWithNonEUI48MacAddress(t *testing.T) {
-	_, err := magicpacket.New("02:00:5e:10:00:00:00:01")
+	_, err := magicpacket.New("ab:ab:ab:ab:ab:ab:ab:ab")
 	if !errors.Is(err, magicpacket.ErrNotValidEUI48MacAddress) {
 		t.Errorf("expected %s, Got: %s", magicpacket.ErrNotValidEUI48MacAddress, err)
 	}
