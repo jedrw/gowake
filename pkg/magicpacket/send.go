@@ -5,14 +5,24 @@ import (
 	"net"
 )
 
-func Send(packet MagicPacket, ip string, port int) error {
-	conn, err := net.Dial("udp", fmt.Sprintf("%s:%d", ip, port))
+func Send(magicPacket MagicPacket, ip string, port int) error {
+	sendIP := net.ParseIP(ip)
+	if sendIP == nil {
+		return fmt.Errorf("invalid IP: %s", ip)
+	}
+
+	addr := net.UDPAddr{
+		IP:   sendIP,
+		Port: port,
+	}
+
+	conn, err := net.Dial("udp", addr.String())
 	if err != nil {
 		return err
 	}
 	defer conn.Close()
 
-	_, err = conn.Write(packet[:])
+	_, err = conn.Write(magicPacket.Bytes())
 	if err != nil {
 		return err
 	}

@@ -1,59 +1,48 @@
 package main
 
 import (
+	"errors"
 	"fmt"
-	"regexp"
+	"net"
 
-	"github.com/jedrw/gowake/cmd/listen"
+	"github.com/jedrw/gowake/cmd/gowake/listen"
 	"github.com/jedrw/gowake/pkg/magicpacket"
 	"github.com/spf13/cobra"
 )
 
+var port int
+var ip string
+
 var gowakeCmd = &cobra.Command{
-	Use:   "gowake [macaddress]",
-	Short: "Send a magic packet in order wake a compliant machine",
-	Args:  cobra.ExactArgs(1),
-	Run: func(cmd *cobra.Command, args []string) {
-		// Get port
-		port, _ := cmd.Flags().GetInt("port")
-
-		// Get IP
+	Use:          "gowake [macaddress]",
+	Short:        "Send a magic packet",
+	Args:         cobra.ExactArgs(1),
+	SilenceUsage: true,
+	RunE: func(cmd *cobra.Command, args []string) error {
 		ip, _ := cmd.Flags().GetString("ip")
-
-		is_ip, _ := regexp.MatchString(`^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}$`, ip)
-		if !is_ip {
-			fmt.Println("Please provide a valid IP address")
-			return
+		if net.ParseIP(ip) == nil {
+			return errors.New("got invalid IP")
 		}
 
-		// Check for mac address
-		if len(args) < 1 {
-			fmt.Println("Please provide a MAC address")
-			return
-		}
-
-		// Build packet
-		mp, err := magicpacket.New(args[0])
+		port, _ := cmd.Flags().GetInt("port")
+		magicPacket, err := magicpacket.New(args[0])
 		if err != nil {
-			fmt.Println(err.Error())
-			return
+			return err
 		}
 
-		// Send packet
-		err = magicpacket.Send(mp, ip, port)
+		err = magicpacket.Send(magicPacket, ip, port)
 		if err != nil {
-			fmt.Println(err.Error())
+			return err
 		}
 
-		fmt.Printf("Sent magic packet to %v\n", args[0])
+		fmt.Printf("Sent magic packet %s to %s:%d\n", args[0], ip, port)
+		return nil
 	},
 }
 
 func init() {
-	var port int
-	var ip string
 	gowakeCmd.AddCommand(listen.ListenCmd)
-	gowakeCmd.PersistentFlags().IntVarP(&port, "port", "p", 9, "Port to send or listen for magic packet")
+	gowakeCmd.Flags().IntVarP(&port, "port", "p", 9, "Port to send magic packet to")
 	gowakeCmd.Flags().StringVarP(&ip, "ip", "i", "255.255.255.255", "Destination (IP or broadcast address) for the magic packet")
 	gowakeCmd.PersistentFlags().BoolP("help", "h", false, "Print help for command")
 	cobra.EnableCommandSorting = false

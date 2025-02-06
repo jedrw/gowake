@@ -1,14 +1,18 @@
 package magicpacket
 
 import (
-	"bytes"
 	"fmt"
 	"net"
 )
 
-func Listen(port int) (*net.UDPAddr, string, error) {
+func Listen(ip string, port int) (*net.UDPAddr, string, error) {
+	listenIP := net.ParseIP(ip)
+	if listenIP == nil {
+		return nil, "", fmt.Errorf("invalid IP: %s", ip)
+	}
+
 	addr := net.UDPAddr{
-		IP:   net.ParseIP("0.0.0.0"),
+		IP:   listenIP,
 		Port: port,
 	}
 
@@ -18,21 +22,11 @@ func Listen(port int) (*net.UDPAddr, string, error) {
 	}
 	defer listener.Close()
 
-	var magicPacket MagicPacket
-	remote := &net.UDPAddr{}
-	_, remote, err = listener.ReadFromUDP(magicPacket[:])
+	magicPacket := MagicPacket{}
+	_, remote, err := listener.ReadFromUDP(magicPacket[:])
 	if err != nil {
 		return remote, "", err
 	}
 
-	macLength := 6
-	offset := 6
-	for i := 0; i < 16; i++ {
-		if !bytes.Equal(magicPacket[offset:offset+macLength], magicPacket[96:]) {
-			return remote, "", fmt.Errorf("received malformed magicpacket from %v", remote)
-		}
-		offset += 6
-	}
-
-	return remote, net.HardwareAddr.String(magicPacket[96:]), err
+	return remote, magicPacket.Mac(), magicPacket.Validate()
 }
